@@ -1,10 +1,12 @@
 import os
-from crewai import Agent, Task, Crew
-from crewai_tools import TavilySearchTool
+from dotenv import load_dotenv
 
-# API Keys
-os.environ["TAVILY_API_KEY"] = "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"
-os.environ["GOOGLE_API_KEY"] = "AIzaSyC93T5uHlf2-8HW9hvrsxuD1V0OzBYwhRU"
+# Load API keys from .env file
+load_dotenv(dotenv_path="../.env")
+
+# Verify keys are loaded
+if not os.getenv("TAVILY_API_KEY") or not os.getenv("GOOGLE_API_KEY"):
+    raise ValueError("Missing API keys in .env file")
 
 # LLM Configuration
 # User-requested model: Gemini 3.1 Flash
