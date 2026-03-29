@@ -3,3 +3,5 @@ crewai-tools
 tavily-python
 langchain-google-genai
 python-dotenv
+fastapi
+uvicorn

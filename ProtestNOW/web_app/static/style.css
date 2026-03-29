@@ -1,0 +1,68 @@
+:root {
+    --bg-dark: #0f172a;
+    --accent-glow: #38bdf8;
+    --accen-purple: #a855f7;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glow-button {
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.glow-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.glow-button:hover::after {
+    opacity: 1;
+}
+
+.glow-button:active {
+    transform: scale(0.95);
+}
+
+.glow-effect {
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin-slow {
+    animation: spin-slow 2s linear infinite;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, var(--accent-glow), var(--accen-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
