@@ -48,10 +48,30 @@
         launchBtn.addEventListener('click', async () => {
             // Loading state
             launchBtn.disabled = true;
+            const originalColor = launchBtn.classList.contains('bg-blue-600') ? 'bg-blue-600' : 'bg-slate-700';
             launchBtn.classList.replace('bg-blue-600', 'bg-slate-700');
             launchBtn.classList.remove('glow-effect');
+            
             statusText.textContent = 'Initializing Agent...';
             spinner.classList.remove('hidden');
+
+            // Periodic status update simulation while blocking
+            const statuses = [
+                'Researching US Protests...', 
+                'Analyzing Activist Data...', 
+                'Summarizing Key Causes...',
+                'Generating Revolutionary Pulse Infographic...',
+                'Finalizing Mission Control...'
+            ];
+            let i = 0;
+            const statusInt = setInterval(() => {
+                if (statusText.textContent.includes('Agent Running Successfully')) {
+                    clearInterval(statusInt);
+                    return;
+                }
+                statusText.textContent = statuses[i % statuses.length];
+                i++;
+            }, 8000);
 
             try {
                 const response = await fetch('/start-agent', {
@@ -60,19 +80,26 @@
                 });
                 
                 const data = await response.json();
+                clearInterval(statusInt);
                 
                 if (data.status === 'success') {
                     statusText.classList.replace('text-white', 'text-emerald-400');
                     statusText.textContent = 'Agent Running Successfully';
+                    console.log('Agent Output:', data.output);
                 } else {
                     statusText.classList.replace('text-white', 'text-rose-400');
                     statusText.textContent = 'Agent Failed to Start';
+                    console.error('Agent Error:', data.error);
                 }
             } catch (error) {
+                clearInterval(statusInt);
                 statusText.classList.replace('text-white', 'text-rose-400');
-                statusText.textContent = 'Network Error: Cannot Connect';
+                statusText.textContent = 'Network Error: Connection Timeout';
             } finally {
                 spinner.classList.add('hidden');
+                launchBtn.disabled = false;
+                launchBtn.classList.replace('bg-slate-700', 'bg-blue-600');
+                launchBtn.classList.add('glow-effect');
             }
         });
     </script>

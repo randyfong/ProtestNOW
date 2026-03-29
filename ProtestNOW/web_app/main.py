@@ -21,13 +21,45 @@ async def read_index():
     from fastapi.responses import FileResponse
     return FileResponse(os.path.join(BASE_DIR, "static/index.html"))
 
+import subprocess
+
 @app.post("/start-agent")
 async def start_agent():
-    # Simulate agent process (e.g., search, data sorting, infographic trigger)
-    await asyncio.sleep(2) # Fake "Initializing" delay
-    
-    # In a real scenario, this could trigger the crewAI script or a subprocess
-    return {"status": "success", "message": "Agent workflow initiated."}
+    # Path to the virtual environment python
+    root_dir = os.path.dirname(BASE_DIR)
+    python_path = os.path.join(root_dir, "venv/bin/python3")
+    script_path = os.path.join(root_dir, "crewAI/protest_tracker.py")
+
+    try:
+        # Run the crewAI agent script
+        # Note: This will block the FastAPI worker for the duration of the search
+        result = subprocess.run(
+            [python_path, script_path],
+            capture_output=True,
+            text=True,
+            cwd=root_dir
+        )
+        
+        if result.returncode == 0:
+            # Save results for NotebookLM phase
+            results_file = os.path.join(root_dir, "research_results.md")
+            with open(results_file, "w") as f:
+                f.write(result.stdout)
+                
+            return {
+                "status": "success", 
+                "message": "Research data captured. Finalizing infographic...",
+                "output_file": "research_results.md"
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": "Agent workflow failed.",
+                "error": result.stderr
+            }
+            
+    except Exception as e:
+        return {"status": "error", "message": f"Execution error: {str(e)}"}
 
 if __name__ == "__main__":
     import uvicorn
